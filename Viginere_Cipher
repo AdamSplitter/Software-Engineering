@@ -1,0 +1,60 @@
+#include <iostream>
+#include <string>
+#include <cctype>
+
+// Function to repeat the key until it matches the length of the text
+std::string generateKey(const std::string& text, const std::string& key) {
+    std::string extendedKey = key;
+    while (extendedKey.length() < text.length()) {
+        extendedKey += key;
+    }
+    return extendedKey.substr(0, text.length());
+}
+
+// Function to encrypt the text using the Vigenère cipher
+std::string encrypt(const std::string& text, const std::string& key) {
+    std::string cipherText;
+    for (size_t i = 0; i < text.length(); ++i) {
+        if (std::isalpha(text[i])) {
+            char offset = std::isupper(text[i]) ? 'A' : 'a';
+            cipherText += (text[i] - offset + (std::tolower(key[i]) - 'a')) % 26 + offset;
+        } else {
+            cipherText += text[i]; // Non-alphabetic characters remain unchanged
+        }
+    }
+    return cipherText;
+}
+
+// Function to decrypt the text using the Vigenère cipher
+std::string decrypt(const std::string& cipherText, const std::string& key) {
+    std::string plainText;
+    for (size_t i = 0; i < cipherText.length(); ++i) {
+        if (std::isalpha(cipherText[i])) {
+            char offset = std::isupper(cipherText[i]) ? 'A' : 'a';
+            plainText += (cipherText[i] - offset - (std::tolower(key[i]) - 'a') + 26) % 26 + offset;
+        } else {
+            plainText += cipherText[i]; // Non-alphabetic characters remain unchanged
+        }
+    }
+    return plainText;
+}
+
+int main() {
+    std::string text, key;
+
+    std::cout << "Enter the text: ";
+    std::getline(std::cin, text);
+
+    std::cout << "Enter the key: ";
+    std::getline(std::cin, key);
+
+    std::string extendedKey = generateKey(text, key);
+
+    std::string cipherText = encrypt(text, extendedKey);
+    std::cout << "Encrypted Text: " << cipherText << std::endl;
+
+    std::string decryptedText = decrypt(cipherText, extendedKey);
+    std::cout << "Decrypted Text: " << decryptedText << std::endl;
+
+    return 0;
+}
